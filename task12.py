@@ -48,20 +48,44 @@ def show():
 			if ph.birthday:
 				contact_phone.append(ph.birthday.value)
 			contact_book[key] = contact_phone
+		else:
+			contact_book[key] = key
 	return contact_book
 
-@input_error
-def add(data):
-	name, phones, birthday = create_data(data)
-	record = Record(name)
-	for phone in phones:
-		record.add(phone = phone)
-	record.add(birthday = birthday)
-	CONTACTS.add_record(record)
-	return "Contact added!"
 
 @input_error
-def change_phone(data):
+def add_phone_func(data):
+	name, phones, birthday = create_data(data)
+	if name in CONTACTS:
+		if phones:
+			for phone in phones:
+				CONTACTS[name].add_phone(phone)
+			return "Phone added!"
+	else:
+		record = Record(name)	
+		if phones:
+			for phone in phones:
+				record.add_phone(phone)
+		CONTACTS.add_record(record)
+		return "Contact added!"
+
+
+@input_error
+def add_birthday_func(data):
+	name, phones, birthday = create_data(data)
+	if name in CONTACTS:
+		if birthday:
+			CONTACTS[name].add_birthday(birthday)
+			return "birthday added!"
+	else:
+		record = Record(name)	
+		if birthday:
+			record.add_birthday(birthday)
+		CONTACTS.add_record(record)
+		return "Contact added!"
+
+@input_error
+def edit_phone(data):
 	change_data = data.split()
 	phone_old = change_data[0]
 	phone_new = change_data[1]
@@ -81,6 +105,28 @@ def remove_phone(phone_to_delete):
 				record.remove(phone.value)
 				CONTACTS[key] = record
 	return f"{phone_to_delete}: Deleted!"
+
+
+@input_error
+def edit_birthday(data):
+	change_data = data.split()
+	name = change_data[0]
+	birthday_new = change_data[1]
+	if name in CONTACTS:
+		record = CONTACTS[name]
+		record.edit_birthday(name, birthday_new)
+		CONTACTS[name] = record
+		return f"{name}: new date --> {birthday_new}: birthday Changed!"
+	return f'{name} is not in AddressBook'
+
+@input_error
+def remove_birthday(name):
+	name = name.strip()
+	if name in CONTACTS:
+		record = CONTACTS[name]
+		record.remove_birthday(name)
+		return f"{name}: birthday Deleted!"
+	return f'{name} is not in AddressBook'
 
 
 @input_error
@@ -138,16 +184,16 @@ def create_data(data):
 			phones.append(value)
 		else:
 			birthday += value	
-	if name.isnumeric():
-		raise ValueError()
-
 	return name, phones, birthday
 
 COMMANDS = {
 'hello': hello, 
-'add': add, 
-'change phone': change_phone,
+'add phone': add_phone_func, 
+'add birthday': add_birthday_func,
+'edit phone': edit_phone,
 'remove phone' : remove_phone,
+'edit birthday': edit_birthday,
+'remove birthday' : remove_birthday,
 'search': search_func, 
 'show all': show,
 'birthday' : days_to_birthday,

@@ -6,6 +6,7 @@ from datetime import *
 class Field:
 	def __init__(self, value):
 		self.value = value
+		self._value = value
 
 
 class Name(Field):
@@ -56,24 +57,31 @@ class Record():
 		self.birthday = None
 
 
-	def add(self, phone=None, birthday=None):
-		if phone:
-			self.phones.append(Phone(phone))
-		if birthday:
-			self.birthday = Birthday(birthday)
+	def add_phone(self, phone):
+		self.phones.append(Phone(phone))
 
-	def remove(self, phone):
-		if self.phones:
-			for ph in self.phones:
-				if ph.value == phone:
-					self.phones.remove(ph)
+	def add_birthday(self, birthday):
+		self.birthday = Birthday(birthday)
 
-	def edit(self, phone_old, phone_new):
-		if self.phones:
-			for ph in self.phones:
-				if ph.value == phone_old:
-					self.phones.remove(ph)
-		self.phones.append(Phone(phone_new))
+	def remove_phone(self, phone_to_remove):
+		for phone in self.phones:
+			if phone.value == phone_to_remove:
+				self.phones.remove(phone)
+
+	def edit_phone(self, phone_old, phone_new):
+		for phone in range(len(self.phones)):
+			if self.phones[phone].value == phone_old:
+				self.phones[phone] = Phone(phone_new)
+
+
+	def remove_birthday(self, name):
+		if self.name.value == name:
+				self.birthday = None
+
+	def edit_birthday(self, name, birthday_new):
+		if self.name.value == name:
+				self.birthday = Birthday(birthday_new)
+
 
 	def days_to_birthday(self):
 		if self.birthday:
@@ -86,7 +94,7 @@ class AddressBook(UserDict):
 		self.data[record.name.value] = record
 
 	def search(self, value):
-		if self.data.get(value):
+		if value in self.data:
 			return self.data[value].name.value, [x.value for x in self.data[value].phones]
 
 		for record in self.data.values():
