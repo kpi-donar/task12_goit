@@ -7,7 +7,7 @@ class Field:
 	def __init__(self, value):
 		self.value = value
 		self._value = value
-
+# fdfdkhfdkhfk
 # Из мейн
 class Name(Field):
 	pass
