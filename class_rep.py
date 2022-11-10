@@ -8,7 +8,7 @@ class Field:
 		self.value = value
 		self._value = value
 # fdfdkhfdkhfk
-# Из мейн
+# Из мей
 class Name(Field):
 	pass
 
